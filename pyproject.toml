@@ -27,6 +27,9 @@ dependencies = [
     "prompt_toolkit>=3.0",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["nanocoder"]
+
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
 
