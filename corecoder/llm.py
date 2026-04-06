@@ -46,21 +46,33 @@ class LLMResponse:
 
 
 # pricing per million tokens: (input, output)
+# sources: openai.com/api/pricing, api-docs.deepseek.com, platform.claude.com,
+#          platform.moonshot.ai, alibabacloud.com/help/en/model-studio
 _PRICING = {
-    "gpt-4o": (2.5, 10),
-    "gpt-4o-mini": (0.15, 0.6),
+    # OpenAI - current flagships
+    "gpt-5.4": (2.5, 15),
+    "gpt-5.4-mini": (0.75, 4.5),
+    "gpt-5.4-nano": (0.2, 1.25),
+    "o4-mini": (1.1, 4.4),
+    # OpenAI - previous gen (still widely used)
     "gpt-4.1": (2, 8),
     "gpt-4.1-mini": (0.4, 1.6),
     "gpt-4.1-nano": (0.1, 0.4),
-    "o3": (2, 8),
-    "o4-mini": (1.1, 4.4),
+    "gpt-4o": (2.5, 10),
+    "gpt-4o-mini": (0.15, 0.6),
+    # DeepSeek
     "deepseek-chat": (0.27, 1.10),
     "deepseek-reasoner": (0.55, 2.19),
+    # Anthropic Claude
+    "claude-opus-4-6": (5, 25),
     "claude-sonnet-4-6": (3, 15),
-    "claude-opus-4-6": (15, 75),
-    "claude-haiku-4-5": (0.8, 4),
-    "qwen-max": (1.6, 6.4),
-    "kimi-k2.5": (0.7, 2.8),
+    "claude-haiku-4-5": (1, 5),
+    # Alibaba Qwen
+    "qwen3-max": (0.78, 3.9),
+    "qwen3-plus": (0.26, 0.78),
+    "qwen-max": (0.78, 3.9),
+    # Moonshot Kimi
+    "kimi-k2.5": (0.6, 3),
 }
 
 
