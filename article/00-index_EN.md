@@ -24,11 +24,11 @@ If you're working on AI Agent-related projects, you'll inevitably use these desi
 
 ## Supporting Project
 
-I've created a working reference implementation of the core architectural patterns discussed in these articles in 1300 lines of Python: [NanoCoder](https://github.com/he-yufeng/NanoCoder). You can compare the code and the articles.
+I've created a working reference implementation of the core architectural patterns discussed in these articles in 1300 lines of Python: [CoreCoder](https://github.com/he-yufeng/CoreCoder). You can compare the code and the articles.
 
 ## Full Version
 
-You can find a comprehensive guide (16 articles, 160,000 words, covering the build system to every subsystem of the MCP protocol) [here](https://github.com/he-yufeng/NanoCoder/tree/main/docs).
+You can find a comprehensive guide (16 articles, 160,000 words, covering the build system to every subsystem of the MCP protocol) [here](https://github.com/he-yufeng/CoreCoder/tree/main/docs).
 
 ---
 

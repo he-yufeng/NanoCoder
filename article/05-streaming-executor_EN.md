@@ -173,17 +173,17 @@ Those who have used Claude Code should know that its response speed after "think
 
 ---
 
-## NanoCoder's Compromise
+## CoreCoder's Compromise
 
 Implementing complete streaming tool parsing on the OpenAI-compatible API presents two challenges:
 
 1. OpenAI's streaming event format is not entirely the same as Anthropic's—the delta format of tool_calls differs.
 2. Different providers exhibit significantly different streaming behaviors; some (like Ollama) will output all tool_calls at the end.
 
-Therefore, NanoCoder opted for a compromise: it doesn't parse tools in the stream, but when the LLM returns multiple tool_calls at once, it uses `concurrent.futures.ThreadPoolExecutor` to execute them in parallel.
+Therefore, CoreCoder opted for a compromise: it doesn't parse tools in the stream, but when the LLM returns multiple tool_calls at once, it uses `concurrent.futures.ThreadPoolExecutor` to execute them in parallel.
 
 ```python
-# nanocoder/agent.py
+# CoreCoder/agent.py
 def _exec_tools_parallel(self, tool_calls, on_tool=None):
     for tc in tool_calls:
         if on_tool:
@@ -206,8 +206,8 @@ The complexity of StreamingToolExecutor (530 lines) does not lie in the parallel
 3. **UI updates**. The progress of each tool needs to be pushed to the terminal in real time. The progress information of multiple tools running in parallel must not overwrite each other.
 4. **AbortController**. When the user presses Ctrl+C, all running tools must be correctly canceled.
 
-These edge cases are not difficult to handle individually, but combined, they generate a large amount of state management code. This is why NanoCoder opted for a simplified implementation—the complexity of the full version is an overkill for a 1300-line educational project.
+These edge cases are not difficult to handle individually, but combined, they generate a large amount of state management code. This is why CoreCoder opted for a simplified implementation—the complexity of the full version is an overkill for a 1300-line educational project.
 
 ---
 
-> This is the 5th article in the [Claude Code Source Code Guide](00-index_EN.md) series. Accompanying implementation: [NanoCoder](https://github.com/he-yufeng/NanoCoder)
+> This is the 5th article in the [Claude Code Source Code Guide](00-index_EN.md) series. Accompanying implementation: [CoreCoder](https://github.com/he-yufeng/CoreCoder)

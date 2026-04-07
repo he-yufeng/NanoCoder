@@ -95,7 +95,7 @@ This means that the same user will see different system prompts in different dir
 
 An interesting point: there are many `@[MODEL LAUNCH]` comments in the source code, each indicating "a place that needs to be modified when a new model is released." Several of these are related to Capybara, including "v8 version has a false claim rate of 29-30%, which needs to be fixed at the prompt level." This indicates that the behavior correction for the new model is done at the system prompt level, not at the model level.
 
-NanoCoder's `prompt.py` is a simplified version of this mechanism (35 lines): it dynamically concatenates data based on the current working directory, OS information, and a list of available tools. There's no model-specific modification or skill loading, but the core idea is the same.
+CoreCoder's `prompt.py` is a simplified version of this mechanism (35 lines): it dynamically concatenates data based on the current working directory, OS information, and a list of available tools. There's no model-specific modification or skill loading, but the core idea is the same.
 
 ---
 
@@ -155,7 +155,7 @@ Another key design element: **concurrency safety flags**: each tool has an `isCo
 
 The resulting effect is the following. Assume the LLM returns three tool calls at once—reading file A (200ms), reading file B (150ms), and running a test (2s). Serial execution takes a total of 2350ms. With StreamingToolExecutor, the three tools start running while the LLM is still being generated, resulting in an actual latency close to max(200, 150, 2000) = 2000ms, or even less (because the tool execution time is "absorbed" by the LLM generation time).
 
-NanoCoder uses a compromise: it doesn't perform streaming parsing, but when the LLM returns multiple tool calls at once, it uses `ThreadPoolExecutor` to execute them in parallel. This sacrifices the advantage of eager execution tools with complete JSON input, i.e."starting execution during LLM generation" but retains the benefit of "multiple tools running in parallel." It involves approximately a dozen lines of code.
+CoreCoder uses a compromise: it doesn't perform streaming parsing, but when the LLM returns multiple tool calls at once, it uses `ThreadPoolExecutor` to execute them in parallel. This sacrifices the advantage of eager execution tools with complete JSON input, i.e."starting execution during LLM generation" but retains the benefit of "multiple tools running in parallel." It involves approximately a dozen lines of code.
 
 ---
 
@@ -186,7 +186,7 @@ Whoever maintains this code has clearly been burned many times.
 
 This is the core meaning of "agentic": the agent solves problems on its own, rather than turning to others for help.
 
-NanoCoder's `agent.py` implements tool exception handling, feeding back to LLM, and setting `max_rounds` limits, but it doesn't implement API-level retries and fallbacks (these vary too much between different LLM providers and are more suitable for higher-level handling).
+CoreCoder's `agent.py` implements tool exception handling, feeding back to LLM, and setting `max_rounds` limits, but it doesn't implement API-level retries and fallbacks (these vary too much between different LLM providers and are more suitable for higher-level handling).
 
 ---
 ## Detail Four: Token Budget
@@ -207,7 +207,7 @@ type QueryEngineConfig = {
 }
 ```
 
-NanoCoder uses `max_rounds=50` to limit the number of rounds, but deliberately doesn't use a USD budget (rates are inconsistent in a multi-provider environment, making calculation difficult).
+CoreCoder uses `max_rounds=50` to limit the number of rounds, but deliberately doesn't use a USD budget (rates are inconsistent in a multi-provider environment, making calculation difficult).
 
 ---
 
@@ -235,8 +235,8 @@ If you're developing your own Agent product, the most important design principle
 
 5. **Dynamically assemble system prompts**, allowing the same Agent to behave differently in different environments.
 
-I've implemented these design patterns minimally in NanoCoder (`agent.py`, 110 lines). If you want to see what they look like in production code, `query.ts` is the best example.
+I've implemented these design patterns minimally in CoreCoder (`agent.py`, 110 lines). If you want to see what they look like in production code, `query.ts` is the best example.
 
 ---
 
-> This is the second article in the [Claude Code Source Code Guide (EN)](00-index_EN.md) series. Accompanying implementation: [NanoCoder](https://github.com/he-yufeng/NanoCoder)
+> This is the second article in the [Claude Code Source Code Guide (EN)](00-index_EN.md) series. Accompanying implementation: [CoreCoder](https://github.com/he-yufeng/CoreCoder)

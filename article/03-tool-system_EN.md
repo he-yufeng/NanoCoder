@@ -53,7 +53,7 @@ Key constraint: **old_string must appear exactly once in the file.**
 
 This constraint is clever as it transforms the inherently ambiguous operation of "editing a file" into a **deterministic** operation. No matter how poor the LLM's memory is, as long as it provides a unique piece of text, the edit will be accurate.
 
-NanoCoder fully implements this pattern (`tools/edit.py`, line 70), and adds unified diff output—after each edit, you can see a comparison of changes in the format `--- a/file +++ b/file`.
+CoreCoder fully implements this pattern (`tools/edit.py`, line 70), and adds unified diff output—after each edit, you can see a comparison of changes in the format `--- a/file +++ b/file`.
 
 ---
 
@@ -138,7 +138,7 @@ BashTool is a single file of 1143 lines. It does much more than `subprocess.run(
 
 **sed Detection.** When the `sed -i` command is detected, the UI switches from a "Bash" style to a file editing style. Because `sed -i` essentially edits a file, it should display a diff like `edit_file`.
 
-NanoCoder's BashTool is a streamlined 80-line version: output truncation (preserving the beginning and end), timeout control, and regular expression checks for 9 dangerous commands (`rm -rf /`, fork bomb, `curl | bash`, etc.). It covers the most core security requirements.
+CoreCoder's BashTool is a streamlined 80-line version: output truncation (preserving the beginning and end), timeout control, and regular expression checks for 9 dangerous commands (`rm -rf /`, fork bomb, `curl | bash`, etc.). It covers the most core security requirements.
 
 ---
 
@@ -158,6 +158,6 @@ const tools = [
 
 Some tools are "lazy-loaded"—tools marked `shouldDefer: true` are not in the tool list by default; they are only discovered and loaded when the LLM triggers `ToolSearch`. This avoids the LLM's difficulty in selecting tools due to an excessively long tool list (too many tools will cause the LLM to hesitate, affecting response speed and accuracy).
 
-NanoCoder uses the simplest static list. However, the interface design leaves room for expansion—`Agent.__init__` accepts a `tools` parameter; whatever is passed is used.
+CoreCoder uses the simplest static list. However, the interface design leaves room for expansion—`Agent.__init__` accepts a `tools` parameter; whatever is passed is used.
 
-> This is the third article in the [Claude Code Source Code Guide](00-index_EN.md) series. Accompanying implementation: [NanoCoder](https://github.com/he-yufeng/NanoCoder)
+> This is the third article in the [Claude Code Source Code Guide](00-index_EN.md) series. Accompanying implementation: [CoreCoder](https://github.com/he-yufeng/CoreCoder)

@@ -137,7 +137,7 @@ The following six articles will delve deeper into each of these:
 - Article 6: Multi-Agent Collaboration System
 - Article 7: Unreleased features behind Feature Flag
 
-I also replicated these core design patterns in 1300 lines of Python: [NanoCoder](https://github.com/he-yufeng/NanoCoder). Each article will explain the source code and the NanoCoder implementation.
+I also replicated these core design patterns in 1300 lines of Python: [CoreCoder](https://github.com/he-yufeng/CoreCoder). Each article will explain the source code and the CoreCoder implementation.
 
 ---
 

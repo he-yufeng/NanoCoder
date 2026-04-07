@@ -95,4 +95,4 @@ These directions are currently unexplored areas for the open-source community.
 
 ---
 
-> This article is the 7th in the [Claude Code Source Code Guide](00-index_EN.md) series. This article is accompanied by the implementation: [NanoCoder](https://github.com/he-yufeng/NanoCoder).
+> This article is the 7th in the [Claude Code Source Code Guide](00-index_EN.md) series. This article is accompanied by the implementation: [CoreCoder](https://github.com/he-yufeng/CoreCoder).

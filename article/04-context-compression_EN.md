@@ -47,7 +47,7 @@ src/utils/crypto.py:102: `refresh_jwt(token)`
 
 With this simple compression method no critical information is lost (start and end are preserved), and the effect is immediate. A single grep output was compressed from 2000 tokens to 100 tokens without losing anything. This is the lowest-cost method too as no LLM call is performed in this layer.
 
-The `_snip_tool_outputs()` function in NanoCoder's `context.py` is the implementation for this layer.
+The `_snip_tool_outputs()` function in CoreCoder's `context.py` is the implementation for this layer.
 
 ### Second Layer: `CACHED_MICROCOMPACT` — costs tokens!
 
@@ -69,7 +69,7 @@ The summary returned by the LLM is typically only 1/5 to 1/10 of the original di
 
 This layer also utilizes the Anthropic API's `cache_deleted_input_tokens` capability—marking certain tokens as "deleted" at the API's caching level, without consuming cached token quotas. This effectively frees up space in the cache without altering the message content.
 
-NanoCoder's `_summarize_old()` implements the core logic: it uses the same LLM for summarization, and if the LLM call fails, it falls back to extracting key information (file path, error message) based on regular expressions.
+CoreCoder's `_summarize_old()` implements the core logic: it uses the same LLM for summarization, and if the LLM call fails, it falls back to extracting key information (file path, error message) based on regular expressions.
 
 ### Third Layer: CONTEXT_COLLAPSE — Structured Archiving
 
@@ -93,7 +93,7 @@ Current state: All changes committed, ready for PR
 
 This layer will lose details. But it's better than simple truncation: truncation cuts in chronological order (the earliest is discarded first), while CONTEXT_COLLAPSE at least retains the key decision points of each round. LLM doesn't know the specific code changes, but it knows "the error handling in auth.py was modified before," and won't repeat what it has already done.
 
-NanoCoder's `_hard_collapse()` implements this layer.
+CoreCoder's `_hard_collapse()` implements this layer.
 
 ### Fourth Layer: Autocompact — Automatic Compactor
 
@@ -101,7 +101,7 @@ Claude Code has a `/compact` command that allows users to actively trigger compr
 
 The system checks the current token usage before each API call. If it's close to the limit, compression is automatically performed without the user's awareness. Users don't need to worry about token management.
 
-NanoCoder's `maybe_compress()` uses this mechanism—automatically checking at the beginning of each iteration of `agent.chat()` and after each round of tool execution.
+CoreCoder's `maybe_compress()` uses this mechanism—automatically checking at the beginning of each iteration of `agent.chat()` and after each round of tool execution.
 
 ---
 
@@ -114,11 +114,11 @@ The hardest part of context compression isn't "how to compress," but "what to co
 - Critical decisions made: if instructions like "The user said not to modify config.yaml" are suppressed, LLM might violate them. 
 - Unresolved Errors: if information about bugs being processed is lost, LLM will start the investigation from scratch.
 
-Claude Code's digest prompt explicitly lists these reserved items. NanoCoder does the same.
+Claude Code's digest prompt explicitly lists these reserved items. CoreCoder does the same.
 
 **How ​​many tokens does the digest itself occupy?**
 
-If the digest is too long, compression is wasted. Claude Code limits the output length of digest calls using the `max_tokens` parameter. NanoCoder limits the digest call prompt to 15,000 characters.
+If the digest is too long, compression is wasted. Claude Code limits the output length of digest calls using the `max_tokens` parameter. CoreCoder limits the digest call prompt to 15,000 characters.
 
 **Will LLM "forget" its tasks after compression?**
 
@@ -128,7 +128,7 @@ Claude Code's strategy emphasizes "preserving user-explicitly requested operatio
 
 **Which model to use for summarizing?**
 
-Claude Code uses the same model. The cost of one summary call is approximately equal to the cost of one normal conversation. NanoCoder works similarly. If you want to save money, you can use a cheaper model specifically for summarizing (e.g., using DeepSeek as the primary model but GPT-4o-mini for summarizing).
+Claude Code uses the same model. The cost of one summary call is approximately equal to the cost of one normal conversation. CoreCoder works similarly. If you want to save money, you can use a cheaper model specifically for summarizing (e.g., using DeepSeek as the primary model but GPT-4o-mini for summarizing).
 
 ---
 
@@ -142,4 +142,4 @@ Claude Code's four-layer strategy is essentially a hierarchical approach based o
 
 ---
 
-> This article is the 4th in the [Claude Code Source Code Guide](00-index_EN.md) series. Accompanying implementation: [NanoCoder](https://github.com/he-yufeng/NanoCoder)
+> This article is the 4th in the [Claude Code Source Code Guide](00-index_EN.md) series. Accompanying implementation: [CoreCoder](https://github.com/he-yufeng/CoreCoder)

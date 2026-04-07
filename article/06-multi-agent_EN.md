@@ -77,7 +77,7 @@ This isn't technically impossible (recursive agents are theoretically entirely f
 2. **Debugging Hell:** Debugging two layers (master + child) is already complex enough. Passing context between three nested agents means you have no idea which layer caused the problem.
 3. **Diminishing Returns:** In practice, two layers cover almost all scenarios. Tasks requiring three nested layers should typically be broken down into multiple independent tasks, rather than using deeper agent trees.
 
-NanoCoder also uses the same design: `AgentTool.execute()` filters out `agent` from the tool list when creating a child agent.
+CoreCoder also uses the same design: `AgentTool.execute()` filters out `agent` from the tool list when creating a child agent.
 
 ---
 
@@ -111,7 +111,7 @@ Sub-Agent:
 ```
 The main agent only sees this summary and doesn't know what files the sub-agent read or what thought process it undertook. This is good—the main agent doesn't need to know these details; it only needs the conclusions of the subtasks to make its next decision.
 
-NanoCoder also limits the length of the sub-agent's results to a maximum of 5000 characters to prevent overloading the main agent's context.
+CoreCoder also limits the length of the sub-agent's results to a maximum of 5000 characters to prevent overloading the main agent's context.
 
 ---
 
@@ -153,13 +153,13 @@ The `built-in/` directory contains six predefined Agent types:
 
 Interestingly, `exploreAgent`'s tool-list **does not contain any writing tools** (no edit_file, write_file, bash). It only contains read_file, grep, and glob. This ensures that exploratory agents won't accidentally modify the code. You tell it to "explore the architecture of this codebase," and it can only view, not modify.
 
-NanoCoder currently only has one Agent type (general-purpose), but you can simulate this by passing different tool lists in `Agent.__init__`:
+CoreCoder currently only has one Agent type (general-purpose), but you can simulate this by passing different tool lists in `Agent.__init__`:
 
 ```python
 # Read-only Agent
-from nanocoder.tools.read import ReadFileTool
-from nanocoder.tools.grep import GrepTool
-from nanocoder.tools.glob_tool import GlobTool
+from CoreCoder.tools.read import ReadFileTool
+from CoreCoder.tools.grep import GrepTool
+from CoreCoder.tools.glob_tool import GlobTool
 
 explore_agent = Agent(llm=llm, tools=[ReadFileTool(), GrepTool(), GlobTool()])
 ```
@@ -189,4 +189,4 @@ The backend supports three methods: tmux pane, in-process, and remote. However, 
 
 ---
 
-> This article is the 6th in the [Claude Code Source Code Guide](00-index_EN.md) series. Accompanying implementation: [NanoCoder](https://github.com/he-yufeng/NanoCoder)
+> This article is the 6th in the [Claude Code Source Code Guide](00-index_EN.md) series. Accompanying implementation: [CoreCoder](https://github.com/he-yufeng/CoreCoder)
