@@ -10,7 +10,7 @@
 
 [中文](README_CN.md) | [English](README.md) | [Claude Code Architecture Deep Dive (7 articles)](article/)
 
-**512,000 lines of TypeScript → ~950 lines of Python.**
+**512,000 lines of TypeScript → ~1,400 lines of Python.**
 
 I spent two days reverse-engineering the leaked Claude Code source — all half a million lines. Then I stripped it down to the load-bearing walls and rebuilt them in Python. The result: **every key architectural pattern from Claude Code, in a codebase you can read in one sitting.**
 
@@ -154,7 +154,7 @@ quit             Exit
 
 |  | Claude Code | Claw-Code | Aider | CoreCoder |
 |---|---|---|---|---|
-| Code | 512K lines (closed) | 100K+ lines | 50K+ lines | **~950 lines** |
+| Code | 512K lines (closed) | 100K+ lines | 50K+ lines | **~1,400 lines** |
 | Models | Anthropic only | Multi | Multi | **Any OpenAI-compatible** |
 | Readable? | No | Hard | Medium | **One afternoon** |
 | Purpose | Use it | Use it | Use it | **Understand it, build yours** |

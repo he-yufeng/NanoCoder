@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Tests](https://github.com/he-yufeng/CoreCoder/actions/workflows/ci.yml/badge.svg)](https://github.com/he-yufeng/CoreCoder/actions)
 
-**51万行 TypeScript → 950 行 Python。**
+**51万行 TypeScript → ~1,400 行 Python。**
 
 我逆向了 Claude Code 泄露的全部源码，然后把不承重的部分全扔掉，用 Python 重建了核心。成果：**Claude Code 的每一个关键架构模式，浓缩在一个下午能读完的代码库里。**
 
@@ -154,7 +154,7 @@ quit             退出
 
 |  | Claude Code | Claw-Code | Aider | CoreCoder |
 |---|---|---|---|---|
-| 代码量 | 51万行（闭源） | 10万+行 | 5万+行 | **~950 行** |
+| 代码量 | 51万行（闭源） | 10万+行 | 5万+行 | **~1,400 行** |
 | 模型 | 仅 Anthropic | 多模型 | 多模型 | **任意 OpenAI 兼容** |
 | 能通读吗？ | 不能 | 很难 | 有点费劲 | **一个下午** |
 | 适合 | 直接用 | 直接用 | 直接用 | **先看懂，再造自己的** |
