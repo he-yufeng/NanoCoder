@@ -74,6 +74,8 @@ pip install -e .
 
 Kimi、Qwen 这些同样是改这两个变量；连 OpenAI 兼容接口都不给的 provider，装上可选的 LiteLLM 后端（`pip install "corecoder[litellm]"`）能路由一百多家。第三篇文章把这块讲得更细。key 可以直接 `export`，也可以在项目根目录扔个 `.env`，启动时自动加载。然后：
 
+端到端真机冒烟过三家（读文件、改代码、跑一次确认、自己报告）：DeepSeek、Qwen3、Kimi K2，走同一个 OpenRouter 兼容端点，各自完整跑完全循环。写脚本用 one-shot 的留意：`-p` 默认拒绝一切改动类工具，要加 `--yes`，这是设计如此。
+
 ```bash
 corecoder                                  # 交互式 REPL
 corecoder -p "给 parse_config() 加错误处理"   # 一次性模式，干完就退
