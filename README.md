@@ -222,6 +222,31 @@ Drop a `hooks.json` under `~/.corecoder` and your own shell commands run around 
 
 Each hook gets the call as JSON on stdin (`tool_name`, `tool_input`; post hooks also get `tool_response`). The matcher is an exact tool name; empty or `*` fires on every tool. A pre hook can veto the call with exit code 2, and its stderr travels back to the model as the reason so it can route around the block. Post hooks only observe and can never block. A hook that errors or runs past ten seconds is skipped with a warning: hooks assist the loop, they never get to kill it. The whole mechanism is `hooks.py`, and the REPL banner shows how many hooks loaded.
 
+Two worth stealing (the commands lean on `jq`, the usual suspect):
+
+```bash
+# 1. lint gate: after every edit/write, run the project's fast linter on the
+#    touched file. The model sees the output and fixes its own mistakes in
+#    the same turn instead of waiting for CI.
+{
+  "PostToolUse": [{
+    "matcher": "edit",
+    "command": "f=$(jq -r .tool_input.path); ruff check \"$f\" 2>&1 | head -20"
+  }]
+}
+
+# 2. write protect: refuse edits under paths you never want an agent to
+#    touch. Exit code 2 vetoes the call and the message reaches the model.
+{
+  "PreToolUse": [{
+    "matcher": "edit",
+    "command": "case \"$(jq -r .tool_input.path)\" in .env*|*/secrets/*|*.pem) echo 'that path is off-limits' >&2; exit 2;; esac"
+  }]
+}
+```
+
+Both are plain shell; nothing here is CoreCoder-specific syntax beyond the JSON shape and the exit-code-2 veto.
+
 ## MCP servers
 
 Drop a `mcp.json` under `~/.corecoder` and tools from any MCP server join the agent over stdio, the same config shape as Claude Code's:

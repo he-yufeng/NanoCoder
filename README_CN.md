@@ -222,6 +222,30 @@ REPL 里 `/plan` 开关计划模式。开着的时候，提示符变成 `(plan)`
 
 每个钩子从 stdin 拿到这次调用的 JSON（`tool_name`、`tool_input`，post 钩子还带 `tool_response`）。matcher 是精确的工具名，留空或写 `*` 表示对所有工具生效。pre 钩子可以否决这次调用：退出码 2，它的 stderr 会作为理由回给模型，让它换条路走。post 钩子只观察，永远拦不住。钩子报错或超过十秒会被跳过并记一条警告：钩子是来帮忙的，没权力弄死循环。整个机制就是 `hooks.py` 一个文件，REPL 启动横幅会显示加载了几条。
 
+两个能直接抄走的（命令里用了 `jq`，装一下就有）：
+
+```bash
+# 1. lint 门：每次 edit/write 之后立刻对改动的文件跑快速 lint。
+#    模型同一回合就能看到输出，自己把低级错误修了，不用等 CI 回来。
+{
+  "PostToolUse": [{
+    "matcher": "edit",
+    "command": "f=$(jq -r .tool_input.path); ruff check \"$f\" 2>&1 | head -20"
+  }]
+}
+
+# 2. 写保护：指定路径一律不让 agent 碰。退出码 2 当场否决，
+#    拒绝原因会送到模型那边。
+{
+  "PreToolUse": [{
+    "matcher": "edit",
+    "command": "case \"$(jq -r .tool_input.path)\" in .env*|*/secrets/*|*.pem) echo 'that path is off-limits' >&2; exit 2;; esac"
+  }]
+}
+```
+
+两个例子都是纯 shell；除了 JSON 形状和退出码 2 否决这两个约定，没有任何 CoreCoder 特有的语法。
+
 ## MCP 服务器
 
 在 `~/.corecoder` 下放一个 `mcp.json`，任何 MCP 服务器的工具就能通过 stdio 接进 agent，配置形状和 Claude Code 的一样：
