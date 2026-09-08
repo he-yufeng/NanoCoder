@@ -151,6 +151,18 @@ Stringing the last piece and this one together, CoreCoder actually puts a tool c
 
 This corresponds to Claude Code's two-phase gating, which public teardowns call `validateInput` and `checkPermissions`: one validates whether the input is legal, the other validates whether the operation is allowed. Splitting "is the format right" and "should it be done" into two gates means each failure gives its own precise feedback, and the model can correct against it specifically. One big merged try-except can't reach that precision.
 
+## Beyond the gates: plan mode, hooks, and tools that live in another process
+
+v0.6.0 added three things along the seam around the call. None of them changes a tool itself; they change who else gets a say between "the model wants to call" and "it actually runs."
+
+The first is plan mode, a third gate with the highest rank. In `agent.py` it is one line: `self.plan_mode and tc.name not in Permission.READ_ONLY`, and a hit refuses the call — it outranks even `--yes`. That ordering is deliberate: a user who turns plan mode on wants the agent to read the code read-only first, and no "I already authorized this" may override. The refusal message is not a bare error either; it explains what plan mode is, so the model knows it should present a plan first. Read first, mutate later is a pattern worth remembering because it is nearly free: one boolean checked ahead of the allowlist.
+
+The second is hooks. `~/.corecoder/hooks.json` lets users hang shell commands on tool calls, in PreToolUse and PostToolUse flavors. A pre hook fires before the consent check (in `agent.py` the ordering is literally `_pre_hooks(tc) or self._permit(tc)`); exit code 2 vetoes the call, and the reason travels from stderr back to the model verbatim, so the model gets text it can understand and fix against, not a stack trace. Post hooks only observe and can never block. The more important tradeoff: a hook that hangs, times out, or exits wrong gets one warning and is skipped. Hooks advise; they never get to kill the loop — the loop's life is not handed to a shell snippet the user dashed off.
+
+The third is MCP. In `mcp.py`, each server is a subprocess speaking newline-delimited JSON-RPC over stdio: handshake, `tools/list`, and then every remote tool registers as `mcp__server__tool`, after which consent, hooks, and plan mode treat it exactly like the built-ins. The lesson is where that "exactly like" comes from: not from special-casing in the MCP code, but from a tool boundary (the `Tool` base class plus the three gates) clean enough that an external tool is just one more implementation. A wedged or dead server costs one error string on that one call; the loop keeps turning.
+
+All three are advanced pieces. They are not on the agent's skeleton — the skeleton is still the loop plus seven tools. But they answer the same question: around a tool call, who else gets to speak? The answer went from "two gates" to "two gates plus a ring of pluggable bypasses," and every bypass is designed to fail without dragging the main loop down with it.
+
 ## Hands-on: write your first tool
 
 After all that talk, better to actually add one. Suppose we want to give the agent the ability to check the current time (the model doesn't know what time it is on its own). Create `corecoder/tools/now.py`:
